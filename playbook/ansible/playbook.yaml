@@ -1,0 +1,66 @@
+---
+- name: Deploy frontend app on Minikube (WSL compatible)
+  hosts: localhost
+  connection: local
+  gather_facts: yes
+
+  vars:
+    project_root: "/mnt/c/Users/hasin/Downloads/task-management-website"
+    docker_image_frontend: "hasinig883/my-docker:v1"
+    frontend_deploy: "{{ project_root }}/frontend-deployment.yaml"
+    frontend_service: "{{ project_root }}/frontend-service.yaml"
+    frontend_nodeport: 3000
+
+  tasks:
+
+    - name: Start Minikube
+      ansible.builtin.shell: |
+        if ! minikube status | grep -q "Running"; then
+          minikube start --driver=docker --force
+        fi
+      args:
+        executable: /bin/bash
+
+    - name: Build Docker image inside Minikube
+      ansible.builtin.shell: |
+        eval $(minikube -p minikube docker-env)
+        docker build -t {{ docker_image_frontend }} .
+      args:
+        chdir: "{{ project_root }}"
+        executable: /bin/bash
+
+    - name: Apply frontend deployment
+      ansible.builtin.shell: |
+        kubectl apply -f {{ frontend_deploy }}
+      args:
+        executable: /bin/bash
+
+    - name: Apply frontend service
+      ansible.builtin.shell: |
+        kubectl apply -f {{ frontend_service }}
+      args:
+        executable: /bin/bash
+
+    - name: Wait for frontend pod to be running
+      ansible.builtin.shell: |
+        kubectl get pods -l app=frontend --no-headers | grep -v Running || true
+      register: pod_status
+      until: pod_status.stdout == ""
+      retries: 20
+      delay: 10
+      args:
+        executable: /bin/bash
+
+    - name: Show services
+      ansible.builtin.shell: kubectl get svc
+      register: svc_output
+      args:
+        executable: /bin/bash
+
+    - name: Print services table
+      ansible.builtin.debug:
+        msg: "{{ svc_output.stdout }}"
+
+    - name: Show access URL
+      ansible.builtin.debug:
+        msg: "Open → http://localhost:{{ frontend_nodeport }}/"

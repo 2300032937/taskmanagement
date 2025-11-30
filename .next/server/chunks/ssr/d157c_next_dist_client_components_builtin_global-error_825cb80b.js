@@ -1,0 +1,3 @@
+module.exports=[97386,(a,b,c)=>{let{createClientModuleProxy:d}=a.r(81773);a.n(d("[project]/Downloads/task-management-website/node_modules/next/dist/client/components/builtin/global-error.js <module evaluation>"))},56498,(a,b,c)=>{let{createClientModuleProxy:d}=a.r(81773);a.n(d("[project]/Downloads/task-management-website/node_modules/next/dist/client/components/builtin/global-error.js"))},66812,a=>{"use strict";a.i(97386);var b=a.i(56498);a.n(b)}];
+
+//# sourceMappingURL=d157c_next_dist_client_components_builtin_global-error_825cb80b.js.map
