@@ -1,4 +1,6 @@
 📌 Task Management Application
+
+
 A full-stack Task Management web application built to help users efficiently create, manage, and track their daily tasks. The project includes authentication, task creation, progress tracking, and responsive UI.
 
 🚀 Features
